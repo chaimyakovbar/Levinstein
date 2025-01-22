@@ -7,19 +7,19 @@ const NavBar = () => {
   const styles = {
     navContainer: {
       display: "flex",
-      justifyContent: "space-between",
+      justifyContent: "center",
       alignItems: "center",
       position: "sticky",
       top: 0,
       zIndex: 1000,
-      backgroundColor: "#f8f8f8", // רקע לבן-אפור כמו של Apple
+      backgroundColor: "black", // רקע שחור
       padding: "10px 20px",
-      boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)", // הצללה עדינה
-      borderBottom: "1px solid #e0e0e0", // קו תחתון דק
+      boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.5)", // הצללה דקה
+      borderBottom: "1px solid #444", // קו תחתון כהה
     },
     logo: {
       textDecoration: "none",
-      color: "#333", // צבע טקסט אפור כהה
+      color: "#FFD700", // צבע זהב
       fontFamily: "'Helvetica Neue', Arial, sans-serif", // גופן נקי
       fontSize: "20px",
       fontWeight: "bold",
@@ -27,38 +27,32 @@ const NavBar = () => {
     },
     brandName: {
       textDecoration: "none",
-      color: "black", // כחול Apple
+      color: "white", // צבע הטקסט הראשי
       fontFamily: "'San Francisco', 'Roboto', sans-serif",
       fontSize: "24px",
       fontWeight: "500",
+      textShadow: "2px 2px 5px #FFD700", // צל בצבע זהב
     },
+
     drawerContainer: {
       display: "flex",
       alignItems: "center",
+    },
+    button: {
+      border: "none",
+      background: "none",
+      cursor: "pointer",
+      color: "white", // צבע טקסט לבן
+      fontFamily: "'Roboto', sans-serif",
+      marginLeft: "15px",
     },
   };
 
   return (
     <div style={styles.navContainer}>
-      {/* <Link to="/" >
-        <button style={{ border: "none", background: "none", cursor: "pointer", }} >
-          לוגו כאן אם יש
-        </button>
-      </Link>
-       */}
-        <button style={{ border: "none", background: "none", cursor: "pointer", }} >
-          אנגלית/עיברית 
-          <br/>
-          מצב לילה/יום
-        </button>
       <Link to="/" style={styles.brandName}>
         Netanel Photography
       </Link>
-      <div style={styles.drawerContainer}>
-        בחירה איזה סור של drawer
-        {/* <DrawerNavBAr /> */}
-        <DrawerCopy2 />
-      </div>
     </div>
   );
 };

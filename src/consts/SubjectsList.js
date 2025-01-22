@@ -14,16 +14,6 @@ const barMitzvahImages = require.context(
   /\.(png|jpe?g|svg)$/
 );
 
-// const labelsArray = [
-//   "חתונות",
-//   "אירוסין",
-//   "בר מצווה",
-//   "ברית מילה",
-//   "פתיחת עסק",
-//   "אירועי צדקה",
-//   "הופעות",
-// ];
-
 const imageList = [
   ...designImages.keys().map((image, index) => ({
     id: index + 1,

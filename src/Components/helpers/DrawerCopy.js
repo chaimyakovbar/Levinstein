@@ -33,23 +33,34 @@ export default function DrawerCopy2() {
       <Button
         onClick={handleClickOpen}
         sx={{
-          border: 'none', // Remove border
+          border: 'none',
           minWidth: 0,
           padding: 0,
         }}
       >
-        <ViewHeadline sx={{ color: 'black' }} /> {/* Black icon */}
+        <ViewHeadline sx={{ color: "white" }} /> {/* Icon בצבע זהב */}
       </Button>
       <Dialog
         fullScreen
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
+        PaperProps={{
+          style: {
+            backgroundColor: 'black', // רקע שחור לחלון
+            color: 'white', // טקסט לבן
+          },
+        }}
       >
         <div
-          style={{ color: 'black', margin: '13px', marginLeft: '5%', marginTop: '6%', fontSize: '26px' }}
-          edge="start"
-          color="inherit"
+          style={{
+            color: 'white', // טקסט בצבע זהב
+            margin: '13px',
+            marginLeft: '5%',
+            marginTop: '6%',
+            fontSize: '26px',
+            cursor: 'pointer',
+          }}
           onClick={handleClose}
           aria-label="close"
         >
@@ -60,9 +71,24 @@ export default function DrawerCopy2() {
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton onClick={handleClose} component={Link} to={item.link}>
-                <ListItemIcon sx={{ color: "rgb(93, 136, 186)", display: 'flex', flexDirection: 'row-reverse', marginRight: '50px' }}>
+                <ListItemIcon
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row-reverse',
+                    marginRight: '50px',
+                    borderRadius: '8px',
+                  }}
+                >
                   <ListItemText>
-                    <div style={{ fontSize: '30px', color: 'black', textAlign: 'right', marginLeft: '50px', padding: 0 }}>
+                    <div
+                      style={{
+                        fontSize: '30px',
+                        color: 'white', // טקסט לבן
+                        textAlign: 'right',
+                        marginLeft: '50px',
+                        padding: 0,
+                      }}
+                    >
                       {item.text}
                     </div>
                   </ListItemText>
