@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import DrawerNavBAr from "./Drawer";
-// import DrawerCopy2 from "./DrawerCopy";
+import DrawerNavBAr from "./Drawer";
+import DrawerCopy2 from "./DrawerCopy";
 
 const NavBar = () => {
   const styles = {
@@ -53,6 +53,8 @@ const NavBar = () => {
       <Link to="/" style={styles.brandName}>
         Netanel Photography
       </Link>
+      <DrawerCopy2 />
+      <DrawerNavBAr />
     </div>
   );
 };
