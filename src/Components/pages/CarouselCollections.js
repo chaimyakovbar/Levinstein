@@ -23,14 +23,16 @@ const CarouselCollections = () => {
               animationHandler={"fade"}
             >
               {CAROUSEL_LIST.map((item, index) => (
+                
                 <img key={index} src={item.image} alt={item.label} />
+
               ))}
             </Carousel>
           ) : (
             <>
               <div >
                 <img
-                style={{height: '100px'}}
+                  style={{ height: '100px' }}
                   src={image.image}
                   alt={`${image.label} Theme`}
                   onClick={() => {

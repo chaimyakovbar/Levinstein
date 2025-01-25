@@ -1,116 +1,112 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Box, Typography } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-
 import { IMAGE_LIST } from "../../consts/SubjectsList";
 import DialogForImage from "./Dialog";
 
 const CollectionPage = () => {
   const [selectedImages, setSelectedImages] = useState(null);
+  const [imageLayouts, setImageLayouts] = useState([]);
   const { label } = useParams();
   const navigate = useNavigate();
   const collection = IMAGE_LIST.find((item) => item.label === label);
 
   const styles = {
     container: {
-      backgroundColor: '#0a0a0a',
-      minHeight: '100vh',
-      padding: '60px 20px',
-      color: '#f5f5f5',
+      backgroundColor: "#0a0a0a",
+      minHeight: "100vh",
+      padding: "60px 20px",
+      color: "#f5f5f5",
     },
     header: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '20px',
-      marginBottom: '40px',
-      maxWidth: '1200px',
-      margin: '0 auto 40px',
+      display: "flex",
+      alignItems: "center",
+      gap: "20px",
+      marginBottom: "40px",
+      maxWidth: "1200px",
+      margin: "0 auto 40px",
     },
     backButton: {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      color: '#f5f5f5',
-      borderRadius: '50%',
-      minWidth: '40px',
-      width: '40px',
-      height: '40px',
-      padding: '8px',
-      '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      color: "#f5f5f5",
+      borderRadius: "50%",
+      minWidth: "40px",
+      width: "40px",
+      height: "40px",
+      padding: "8px",
+      "&:hover": {
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
       },
     },
     title: {
-      fontSize: '2rem',
-      fontWeight: '500',
+      fontSize: "2rem",
+      fontWeight: "500",
     },
     galleryContainer: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: '20px',
-      padding: '0 20px',
+      maxWidth: "1200px",
+      margin: "0 auto",
+      display: "grid",
+      gridAutoFlow: "dense", // מבטיח שהתמונות יתמלאו ללא חורים
+      gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", // פריסה גמישה
+      gap: "8px", // רווח קטן יותר בין התמונות
+      padding: "0 20px",
     },
+    
+    
     imageWrapper: {
-      position: 'relative',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      aspectRatio: '1',
-      cursor: 'pointer',
-      transition: 'transform 0.3s ease',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      '&:hover img': {
-        transform: 'scale(1.1)',
-      },
+      overflow: "hidden",
+      borderRadius: "12px",
     },
     image: {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-      transition: 'transform 0.3s ease',
-    },
-    overlayText: {
-      color: '#fff',
-      fontWeight: 'bold',
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
     },
   };
+
+  useEffect(() => {
+    const loadImageLayouts = async () => {
+      if (!collection) return;
+      const layouts = await Promise.all(
+        IMAGE_LIST.filter((item) => item.label === collection.label).map(
+          async (image) => {
+            const layout = await calculateImageLayout(image.image);
+            return { ...image, ...layout }; // שמור cols ו-rows
+          }
+        )
+      );
+      setImageLayouts(layouts);
+    };
+
+    loadImageLayouts();
+  }, [collection]);
 
   if (!collection) {
     return <Box sx={styles.container}>Collection not found.</Box>;
   }
 
-  const filteredImages = IMAGE_LIST.filter(
-    (image) => image.label === collection.label
-  );
-
   return (
     <Box sx={styles.container}>
       <Box sx={styles.header}>
-        <Button
-          sx={styles.backButton}
-          onClick={() => navigate("/works")}
-        >
+        <Button sx={styles.backButton} onClick={() => navigate("/")}>
           <ArrowBack />
         </Button>
-        <Typography sx={styles.title}>
-          {collection.label}
-        </Typography>
+        <Typography sx={styles.title}>{collection.label}</Typography>
       </Box>
 
       <Box sx={styles.galleryContainer}>
-        {filteredImages.map((image, index) => (
+        {imageLayouts.map((image, index) => (
           <Box
             key={index}
-            sx={styles.imageWrapper}
+            sx={{
+              gridColumn: `span ${image.cols}`,
+              gridRow: `span ${image.rows}`,
+              ...styles.imageWrapper,
+            }}
             onClick={() => setSelectedImages(image)}
           >
-            <img
-              src={image.image}
-              alt={image.label}
-              style={styles.image}
-            />
+            <img src={image.image} alt={image.label} style={styles.image} />
           </Box>
         ))}
       </Box>
@@ -119,7 +115,7 @@ const CollectionPage = () => {
           open={!!selectedImages}
           onClose={() => setSelectedImages(null)}
           image={selectedImages}
-          allImages={filteredImages}
+          allImages={imageLayouts}
         />
       )}
     </Box>
@@ -127,3 +123,18 @@ const CollectionPage = () => {
 };
 
 export default CollectionPage;
+
+// פונקציה לחישוב הפריסה
+function calculateImageLayout(imageSrc) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => {
+      if (img.width > img.height) {
+        resolve({ cols: 2, rows: 1 }); // תמונה לרוחב
+      } else {
+        resolve({ cols: 1, rows: 2 }); // תמונה לאורך
+      }
+    };
+  });
+}
