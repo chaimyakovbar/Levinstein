@@ -1,53 +1,105 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-
-import { Carousel } from "react-responsive-carousel";
-import { COLLECTION_LIST, CAROUSEL_LIST } from "../../consts/SubjectsList";
+import Slider from "react-slick";
+import { CAROUSEL_LIST } from "../../consts/SubjectsList";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { Box } from "@mui/material";
 
 const CarouselCollections = () => {
-  const navigate = useNavigate();
+  const styles = {
+    carouselWrapper: {
+      width: "100%",
+      margin: "2rem auto",
+      overflow: "hidden",
+      "& .slick-track": {
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+      },
+      "& .slick-list": {
+        overflow: "hidden",
+        margin: "0 -5px",
+      },
+      "& .slick-slide": {
+        width: "450px !important",
+        padding: "0 5px",
+      },
+    },
+    imageCard: {
+      position: "relative",
+      overflow: "hidden",
+      borderRadius: "12px",
+      aspectRatio: "16/10",
+      width: "100%",
+      height: "300px",
+    },
+    image: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      objectPosition: "center",
+    },
+  };
+
+  const settings = {
+    slidesToShow: 5,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 0,
+    cssEase: "linear",
+    speed: 10000,
+    swipe: false,
+    touchMove: false,
+    draggable: false,
+    pauseOnHover: false,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          infinite: true,
+          autoplay: true,
+          autoplaySpeed: 0,
+          cssEase: "linear",
+          speed: 10000,
+        },
+      },
+      {
+        breakpoint: 800,
+        settings: {
+          slidesToShow: 2,
+          infinite: true,
+          autoplay: true,
+          autoplaySpeed: 0,
+          cssEase: "linear",
+          speed: 10000,
+        },
+      },
+    ],
+  };
+
+  const extendedCarouselList = [
+    ...CAROUSEL_LIST,
+    ...CAROUSEL_LIST, // Duplicate items for seamless looping
+  ];
 
   return (
-    <div>
-      {COLLECTION_LIST.slice(0, 3).map((image, index) => (
-        <div
-          key={index}
-        >
-          {index === 0 ? (
-            <Carousel
-              showArrows={false}
-              showThumbs={false}
-              showStatus={false}
-              autoPlay={true}
-              transitionTime={1000}
-              animationHandler={"fade"}
-            >
-              {CAROUSEL_LIST.map((item, index) => (
-                
-                <img key={index} src={item.image} alt={item.label} />
-
-              ))}
-            </Carousel>
-          ) : (
-            <>
-              <div >
-                <img
-                  style={{ height: '100px' }}
-                  src={image.image}
-                  alt={`${image.label} Theme`}
-                  onClick={() => {
-                    navigate(`/collections/${image.label}`);
-                  }}
-                />
-                <div>
-                  <h2 >{image.label}</h2>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      ))}
-    </div>
+    <Box sx={styles.carouselWrapper}>
+      <Slider {...settings}>
+        {extendedCarouselList.map((item, index) => (
+          <div key={index}>
+            <Box sx={styles.imageCard}>
+              <Box
+                component="img"
+                src={item.image}
+                alt={item.title}
+                sx={styles.image}
+              />
+            </Box>
+          </div>
+        ))}
+      </Slider>
+    </Box>
   );
 };
 

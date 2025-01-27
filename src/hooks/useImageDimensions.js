@@ -1,47 +1,43 @@
 import { useState, useEffect } from "react";
 
-const useImageDimensions = (imageUrl) => {
-  const [dimensions, setDimensions] = useState({
-    width: 0,
-    height: 0,
-    aspectRatio: 0,
-  });
+const useImageDimensions = (imageUrls) => {
+  const [dimensions, setDimensions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!imageUrl) {
+    const fetchDimensions = async () => {
+      const results = await Promise.all(
+        imageUrls.map((url) => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+              const aspectRatio = img.width / img.height;
+              resolve({
+                width: img.width,
+                height: img.height,
+                aspectRatio: aspectRatio,
+              });
+            };
+            img.onerror = () => {
+              console.error("Error loading image:", url);
+              resolve({ width: 0, height: 0, aspectRatio: 1 });
+            };
+            img.src = url;
+          });
+        })
+      );
+      setDimensions(results);
       setLoading(false);
-      return;
+    };
+
+    if (imageUrls.length > 0) {
+      fetchDimensions();
+    } else {
+      setLoading(false);
     }
+  }, [imageUrls]);
 
-    const img = new Image();
-
-    img.onload = () => {
-      const aspectRatio = img.width / img.height;
-      setDimensions({
-        width: img.width,
-        height: img.height,
-        aspectRatio: aspectRatio,
-      });
-      setLoading(false);
-    };
-
-    img.onerror = () => {
-      console.error("Error loading image:", imageUrl);
-      setDimensions({ width: 0, height: 0, aspectRatio: 1 });
-      setLoading(false);
-    };
-
-    img.src = imageUrl;
-
-    // Cleanup function
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [imageUrl]);
-
-  return { ...dimensions, loading };
+  return { dimensions, loading };
 };
 
 export default useImageDimensions;

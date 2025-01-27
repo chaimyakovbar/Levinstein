@@ -1,5 +1,5 @@
 import React from "react";
-import mainphoto from "../../assets/images/circumcision/circumcision_3.jpg";
+import mainphoto from "../../assets/face.jpg";
 import { Box, Typography } from "@mui/material";
 
 const HeroImages = () => {
@@ -23,7 +23,7 @@ const HeroImages = () => {
           bottom: 0,
           backgroundImage: `url(${mainphoto})`,
           backgroundSize: "cover",
-          backgroundPosition: "center 30%",
+          backgroundPosition: "center 35%",
           backgroundRepeat: "no-repeat",
           width: "100%",
           height: "100%",
