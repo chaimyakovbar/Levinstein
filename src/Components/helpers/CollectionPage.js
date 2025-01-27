@@ -8,6 +8,7 @@ import { IMAGE_LIST, REMAINING_BATCHES } from "../../consts/SubjectsList";
 import DialogForImage from "./Dialog";
 import useImageLoading from "../../hooks/useImageLoading";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import useImageDimensions from "../../hooks/useImageDimensions";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
 const IMAGES_PER_BATCH = 12;
@@ -28,6 +29,10 @@ const CollectionPage = () => {
     () => IMAGE_LIST.filter((item) => item.label === label),
     [label]
   );
+
+  const imageUrls = images.map((image) => image.image);
+  const { dimensions: imageDimensions, loading: imageDimensionsLoading } =
+    useImageDimensions(imageUrls);
 
   useEffect(() => {
     const loadNextBatch = async () => {
@@ -100,13 +105,13 @@ const CollectionPage = () => {
       maxWidth: "1200px",
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+      gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
       gap: "20px",
       padding: "0 20px",
+      gridAutoRows: "250px",
     },
     imageContainer: {
       position: "relative",
-      aspectRatio: "4/3",
       borderRadius: "12px",
       overflow: "hidden",
       cursor: "pointer",
@@ -152,43 +157,74 @@ const CollectionPage = () => {
       </Box>
 
       <Box sx={styles.galleryContainer}>
-        {images.map((image, index) => (
-          <Box
-            key={index}
-            className="collection-image"
-            sx={styles.imageContainer}
-            onClick={() => setSelectedImages(image)}
-          >
-            <LazyLoadImage
-              src={image.image}
-              alt={image.label}
-              width="100%"
-              height="100%"
-              effect="blur"
-              placeholder={
-                <Blurhash
-                  hash="LEHV6nWB2yk8pyo0adR*.7kCMdnj"
-                  width="100%"
-                  height="100%"
-                  resolutionX={32}
-                  resolutionY={32}
-                  punch={1}
-                />
-              }
-              style={{
-                objectFit: "cover",
-                width: "100%",
-                height: "100%",
-                transition: "transform 0.3s ease",
-                "&:hover": {
-                  transform: "scale(1.05)",
-                },
-              }}
-            />
-          </Box>
-        ))}
+        {images.map((image, index) => {
+          const { width, height } = imageDimensions[index] || {};
+          const aspectRatio = width / height;
 
-        {loading && (
+          let spanConfig = {};
+          if (aspectRatio > 1.5) {
+            // Very wide images
+            spanConfig = {
+              gridColumn: "span 2",
+              gridRow: "span 1",
+            };
+          } else if (aspectRatio < 0.9) {
+            // Very tall images
+            spanConfig = {
+              gridColumn: "span 1",
+              gridRow: "span 2",
+            };
+          } else {
+            // Normal aspect ratio images
+            spanConfig = {
+              gridColumn: "span 1",
+              gridRow: "span 1",
+            };
+          }
+
+          const imageStyle = {
+            ...styles.imageContainer,
+            ...spanConfig,
+          };
+
+          return (
+            <Box
+              key={index}
+              className="collection-image"
+              sx={imageStyle}
+              onClick={() => setSelectedImages(image)}
+            >
+              <LazyLoadImage
+                src={image.image}
+                alt={image.label}
+                width="100%"
+                height="100%"
+                effect="blur"
+                placeholder={
+                  <Blurhash
+                    hash="LEHV6nWB2yk8pyo0adR*.7kCMdnj"
+                    width="100%"
+                    height="100%"
+                    resolutionX={32}
+                    resolutionY={32}
+                    punch={1}
+                  />
+                }
+                style={{
+                  objectFit: "cover",
+                  width: "100%",
+                  height: "100%",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                  },
+                }}
+              />
+            </Box>
+          );
+        })}
+
+        {imageDimensionsLoading && (
           <Box sx={styles.loadingContainer}>
             <CircularProgress size={40} sx={{ color: "#f5f5f5" }} />
           </Box>

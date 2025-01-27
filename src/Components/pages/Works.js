@@ -37,9 +37,6 @@ const Works = () => {
       height: "100%",
       objectFit: "cover",
       transition: "transform 0.3s ease",
-      "&:hover": {
-        transform: "scale(1.05)",
-      },
     },
     label: {
       position: "absolute",
@@ -61,7 +58,6 @@ const Works = () => {
     },
   };
 
-  // Filter out any invalid items
   const validCollectionItems = COLLECTION_LIST.filter(
     (item) => item && item.image && item.label
   );
@@ -75,17 +71,12 @@ const Works = () => {
             key={image.id}
             className="image-wrapper"
             style={styles.imageWrapper}
-            onClick={() => navigate(`/collections/${image.label}`)}
+            onClick={() => {
+              window.scrollTo(0, 0);
+              navigate(`/collections/${image.label}`);
+            }}
           >
-            <img
-              src={image.image}
-              alt={image.label}
-              style={styles.image}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "path/to/fallback/image.jpg"; // Add a fallback image
-              }}
-            />
+            <img src={image.image} alt={image.label} style={styles.image} />
             <div style={styles.label}>{image.label}</div>
           </div>
         ))}

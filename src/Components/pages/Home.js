@@ -4,6 +4,7 @@ import Works from "./Works";
 import HeroImages from "../helpers/HeroImages";
 import AboutSection from "../helpers/AboutSection";
 import SocialNetworks from "../helpers/SocialNetworks";
+import CarouselCollections from "./CarouselCollections";
 
 const Home = () => {
   const styles = {
@@ -19,7 +20,6 @@ const Home = () => {
     },
     contentWrapper: {
       width: "100wh",
-      // margin: "auto",
     },
     sectionWrapper: {
       marginBottom: "40px",
@@ -29,10 +29,11 @@ const Home = () => {
   return (
     <div style={styles.container}>
       <HeroImages />
+      <AboutSection />
+      <CarouselCollections />
       <div style={styles.sectionWrapper}>
         <Works />
       </div>
-      <AboutSection />
       <Contact />
       <SocialNetworks />
     </div>

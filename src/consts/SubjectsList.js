@@ -138,12 +138,18 @@ export const COLLECTION_LIST = [
   },
 ].filter((item) => item && item.image);
 
-export const CAROUSEL_LIST = [
-  finalInitialBatch.find((item) => item.collection === "design"),
-  finalInitialBatch.find(
-    (item) => item.collection === "circumcision" && item.id === 38
-  ),
-  finalInitialBatch.find(
-    (item) => item.collection === "bar_mitzvah" && item.id === 100
-  ),
-].filter((item) => item && item.image);
+// Import carousel images
+const carouselImages = require.context(
+  "../assets/images/carousle_images",
+  false,
+  /\.(png|jpe?g|svg)$/
+);
+
+export const CAROUSEL_LIST = carouselImages
+  .keys()
+  .map((image, index) => ({
+    id: index + 1,
+    image: carouselImages(image),
+    collection: "carousel",
+  }))
+  .filter((item) => item && item.image);
