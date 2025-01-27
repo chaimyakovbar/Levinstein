@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Works from "./Components/pages/Works";
@@ -9,8 +9,11 @@ import NavBar from "./Components/helpers/NavBar";
 import PolicySupport from "./Components/pages/PolicySupport";
 import CollectionPage from "./Components/helpers/CollectionPage";
 import AccessibilityMenu from "./Components/helpers/AccessibilityMenu";
+import useImagePreloader from "./hooks/useImagePreloader";
 
 const App = () => {
+  useImagePreloader();
+
   return (
     <Router>
       <NavBar />

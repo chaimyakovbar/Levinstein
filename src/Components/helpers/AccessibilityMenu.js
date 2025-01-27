@@ -39,7 +39,7 @@ const AccessibilityMenu = () => {
 
   const toggleContrast = () => {
     setHighContrast(!highContrast);
-    document.body.style.backgroundColor = highContrast ? "#fff" : "#000";
+    document.body.style.backgroundColor = highContrast ? "#1a1a1a" : "#000";
     document.body.style.color = highContrast ? "#000" : "#fff";
   };
 
@@ -60,8 +60,7 @@ const AccessibilityMenu = () => {
     setInvertedContrast(false);
     setGrayscale(false);
     document.body.style.fontSize = "16px";
-    document.body.style.fontFamily = "Arial";
-    document.body.style.backgroundColor = "#fff";
+    document.body.style.backgroundColor = "#1a1a1a";
     document.body.style.color = "#000";
     document.body.style.filter = "none";
   };

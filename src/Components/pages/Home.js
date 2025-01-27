@@ -8,22 +8,21 @@ import SocialNetworks from "../helpers/SocialNetworks";
 const Home = () => {
   const styles = {
     container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#1a1a1a', // Subtle black background
-      textAlign: 'center', // סידור התוכן במרכז
-      color: '#f5f5f5', // Soft white color for text
-      minHeight: '100vh', // Ensure full viewport height
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#1a1a1a",
+      textAlign: "center",
+      color: "#f5f5f5",
+      minHeight: "100vh",
     },
     contentWrapper: {
-      width: '100%',
-      maxWidth: '1200px',
-      margin: 'auto',
+      width: "100wh",
+      // margin: "auto",
     },
     sectionWrapper: {
-      marginBottom: '40px',
+      marginBottom: "40px",
     },
   };
 

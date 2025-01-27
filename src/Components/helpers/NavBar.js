@@ -1,7 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import DrawerNavBAr from "./Drawer";
-// import DrawerCopy2 from "./DrawerCopy";
 
 const NavBar = () => {
   const styles = {
@@ -12,26 +10,26 @@ const NavBar = () => {
       position: "sticky",
       top: 0,
       zIndex: 1000,
-      backgroundColor: "black", // רקע שחור
+      backgroundColor: "#1a1a1a",
       padding: "10px 20px",
-      boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.5)", // הצללה דקה
-      borderBottom: "1px solid #444", // קו תחתון כהה
+      boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.5)",
+      borderBottom: "1px solid #444",
     },
     logo: {
       textDecoration: "none",
-      color: "#FFD700", // צבע זהב
-      fontFamily: "'Helvetica Neue', Arial, sans-serif", // גופן נקי
+      color: "#FFD700",
+      fontFamily: "'Helvetica Neue', Arial, sans-serif",
       fontSize: "20px",
       fontWeight: "bold",
       cursor: "pointer",
     },
     brandName: {
       textDecoration: "none",
-      color: "white", // צבע הטקסט הראשי
+      color: "white",
       fontFamily: "'San Francisco', 'Roboto', sans-serif",
       fontSize: "24px",
       fontWeight: "500",
-      textShadow: "2px 2px 5px #FFD700", // צל בצבע זהב
+      textShadow: "2px 2px 5px #FFD700",
     },
 
     drawerContainer: {
@@ -42,7 +40,7 @@ const NavBar = () => {
       border: "none",
       background: "none",
       cursor: "pointer",
-      color: "white", // צבע טקסט לבן
+      color: "white",
       fontFamily: "'Roboto', sans-serif",
       marginLeft: "15px",
     },
