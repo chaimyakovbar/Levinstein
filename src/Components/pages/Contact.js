@@ -21,68 +21,69 @@ const Contact = () => {
 
   const styles = {
     container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      backgroundColor: 'rgba(26, 26, 26, 0.7)',
-      color: '#f5f5f5',
-      padding: '30px 20px',
-      borderRadius: '12px',
-      maxWidth: '400px',
-      margin: '0 auto',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      backgroundColor: "rgba(26, 26, 26, 0.7)",
+      color: "#f5f5f5",
+      padding: "30px 20px",
+      borderRadius: "12px",
+      maxWidth: "400px",
+      margin: "0 auto",
     },
     formWrapper: {
-      width: '100%',
-      maxWidth: '500px',
-      margin: 'auto',
+      width: "100%",
+      maxWidth: "500px",
+      margin: "auto",
     },
     title: {
-      marginBottom: '30px',
-      fontSize: '2rem',
-      fontWeight: '600',
-      color: '#f5f5f5',
-      textAlign: 'center',
+      marginBottom: "30px",
+      fontSize: "2rem",
+      fontWeight: "600",
+      color: "#C0D3CAFF",
+      textAlign: "center",
+      fontFamily: "Cormorant Garamond, serif",
     },
     inputField: {
-      marginBottom: '20px',
-      '& .MuiOutlinedInput-root': {
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderRadius: '10px',
-        '& fieldset': {
-          borderColor: 'rgba(255, 255, 255, 0.3)',
+      marginBottom: "20px",
+      "& .MuiOutlinedInput-root": {
+        backgroundColor: "#2c3a33",
+        borderRadius: "10px",
+        "& fieldset": {
+          borderColor: "rgba(197, 185, 165, 0.3)",
         },
-        '&:hover fieldset': {
-          borderColor: '#FFC107',
+        "&:hover fieldset": {
+          borderColor: "#c5b9a5",
         },
-        '&.Mui-focused fieldset': {
-          borderColor: '#FFC107',
+        "&.Mui-focused fieldset": {
+          borderColor: "#c5b9a5",
         },
       },
-      '& .MuiInputLabel-root': {
-        color: '#1a1a1a',
-        '&.Mui-focused': {
-          color: '#1a1a1a',
-        }
+      "& .MuiInputLabel-root": {
+        color: "#c5b9a5",
+        "&.Mui-focused": {
+          color: "#c5b9a5",
+        },
       },
-      '& .MuiOutlinedInput-input': {
-        color: '#1a1a1a',
+      "& .MuiOutlinedInput-input": {
+        color: "#c5b9a5",
       },
     },
     buttonContainer: {
-      display: 'flex',
-      justifyContent: 'center',
-      width: '100%',
-      marginTop: '20px',
+      display: "flex",
+      justifyContent: "center",
+      width: "100%",
+      marginTop: "20px",
     },
     submitButton: {
       fontSize: '18px',
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      color: '#1a1a1a',
+      backgroundColor: '#2c3a33',
+      color: '#c5b9a5',
       borderRadius: '50px',
       fontWeight: '600',
-      border: 'none',
+      border: '2px solid #c5b9a5',
       textTransform: 'uppercase',
-      boxShadow: '0 4px 12px rgba(255, 255, 255, 0.2)',
+      boxShadow: '0 4px 12px rgba(44, 58, 51, 0.2)',
       transition: 'all 0.3s ease',
       position: 'relative',
       overflow: 'hidden',
@@ -90,33 +91,24 @@ const Contact = () => {
       alignItems: 'center',
       cursor: 'pointer',
       padding: '10px 30px',
+      fontFamily: 'Cormorant Garamond, serif',
       '&:hover': {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: '#3d4f45',
         transform: 'translateY(-2px)',
-        boxShadow: '0 6px 15px rgba(255, 255, 255, 0.3)',
+        boxShadow: '0 6px 15px rgba(44, 58, 51, 0.3)',
         '&::before': {
           transform: 'translateX(100%)',
-        }
-      },
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: '-100%',
-        width: '100%',
-        height: '100%',
-        background: 'linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.6), transparent)',
-        transition: 'transform 0.6s ease',
+        },
       },
       '&:active': {
         transform: 'translateY(1px)',
-        boxShadow: '0 2px 8px rgba(255, 255, 255, 0.2)',
-      }
+        boxShadow: '0 2px 8px rgba(44, 58, 51, 0.2)',
+      },
     },
     successMessage: {
-      marginTop: '20px',
-      color: '#FFC107',
-      fontWeight: '500',
+      marginTop: "20px",
+      color: "#FFC107",
+      fontWeight: "500",
     },
   };
 
@@ -139,11 +131,14 @@ const Contact = () => {
 
     try {
       // Send WhatsApp message
-      const whatsappResponse = await fetch('https://netanel-lewinstein-back.onrender.com/send-whatsapp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      const whatsappResponse = await fetch(
+        "https://netanel-lewinstein-back.onrender.com/send-whatsapp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       // Send email
       // const emailResponse = await fetch('/send-email', {
@@ -168,7 +163,7 @@ const Contact = () => {
   return (
     <Box sx={styles.container}>
       <Box sx={styles.formWrapper}>
-        <Typography sx={styles.title} variant="h5" >
+        <Typography sx={styles.title} variant="h5">
           נשמח לשמוע מכם
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -192,11 +187,7 @@ const Contact = () => {
             />
           </Box>
           <Box sx={styles.buttonContainer}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={styles.submitButton}
-            >
+            <Button type="submit" variant="contained" sx={styles.submitButton}>
               שליחה
             </Button>
           </Box>
@@ -210,7 +201,7 @@ const Contact = () => {
           <Box marginBottom={15} />
           <Box display="flex" flexDirection="row">
             {socialItems.map((item, index) => (
-              <ListItem  key={index}>
+              <ListItem key={index}>
                 <a href={item.link}>
                   <ListItemIcon sx={{ color: "rgb(93, 136, 186)" }}>
                     {item.icon}

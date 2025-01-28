@@ -4,8 +4,11 @@ import { CAROUSEL_LIST } from "../../consts/SubjectsList";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Box } from "@mui/material";
+import useImagePreloader from "../../hooks/useImagePreloader";
 
 const CarouselCollections = () => {
+  const { imagesPreloaded } = useImagePreloader();
+  
   const styles = {
     carouselWrapper: {
       width: "100%",
@@ -47,7 +50,7 @@ const CarouselCollections = () => {
     autoplay: true,
     autoplaySpeed: 0,
     cssEase: "linear",
-    speed: 10000,
+    speed: 12000,
     swipe: false,
     touchMove: false,
     draggable: false,
@@ -61,7 +64,7 @@ const CarouselCollections = () => {
           autoplay: true,
           autoplaySpeed: 0,
           cssEase: "linear",
-          speed: 10000,
+          speed: 12000,
         },
       },
       {
@@ -72,7 +75,7 @@ const CarouselCollections = () => {
           autoplay: true,
           autoplaySpeed: 0,
           cssEase: "linear",
-          speed: 10000,
+          speed: 12000,
         },
       },
     ],

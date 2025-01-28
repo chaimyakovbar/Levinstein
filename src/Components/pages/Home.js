@@ -1,10 +1,10 @@
 import React from "react";
 import Contact from "./Contact";
 import Works from "./Works";
-import HeroImages from "../helpers/HeroImages";
 import AboutSection from "../helpers/AboutSection";
 import SocialNetworks from "../helpers/SocialNetworks";
 import CarouselCollections from "./CarouselCollections";
+import WaveDivider from "../helpers/WaveDivider";
 
 const Home = () => {
   const styles = {
@@ -19,7 +19,8 @@ const Home = () => {
       minHeight: "100vh",
     },
     contentWrapper: {
-      width: "100wh",
+      width: "100%",
+      // backgroundColor: "#4A2B20",
     },
     sectionWrapper: {
       marginBottom: "40px",
@@ -28,14 +29,16 @@ const Home = () => {
 
   return (
     <div style={styles.container}>
-      <HeroImages />
-      <AboutSection />
       <CarouselCollections />
-      <div style={styles.sectionWrapper}>
-        <Works />
+      {/* <WaveDivider topColor="#1a1a1a" bottomColor="#4A2B20" /> */}
+      <div style={styles.contentWrapper}>
+        <AboutSection />
+        <div style={styles.sectionWrapper}>
+          <Works />
+        </div>
+        <Contact />
+        <SocialNetworks />
       </div>
-      <Contact />
-      <SocialNetworks />
     </div>
   );
 };
