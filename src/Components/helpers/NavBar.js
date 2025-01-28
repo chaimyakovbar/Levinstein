@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Drawer2 from "./Drawer2";
 
 const NavBar = () => {
   const styles = {
@@ -51,6 +52,9 @@ const NavBar = () => {
       <Link to="/" style={styles.brandName}>
         Netanel Photography
       </Link>
+      <div style={{ position: 'absolute', right: 20 }}>
+        <Drawer2 />
+      </div>
     </div>
   );
 };
