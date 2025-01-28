@@ -74,8 +74,11 @@ const SocialNetworks = () => {
         transform: "translateY(-2px)",
       },
     },
+    listItemText: {
+      fontFamily: "Cormorant Garamond, serif",
+    },
     icon: {
-      color: "#ffffff",
+      color: "#C0D3CAFF",
       marginRight: "15px",
       transition: "transform 0.3s ease",
       "&:hover": {
@@ -84,7 +87,7 @@ const SocialNetworks = () => {
     },
     link: {
       textDecoration: "none",
-      color: "#ffffff",
+      color: "#C0D3CAFF",
       fontSize: "1rem",
       fontWeight: "500",
       letterSpacing: "0.5px",
@@ -93,7 +96,7 @@ const SocialNetworks = () => {
       alignItems: "center",
       width: "100%",
       "&:hover": {
-        color: "#f0f0f0",
+        color: "#C0D3CAFF",
         transform: "translateX(5px)",
       },
     },
@@ -104,11 +107,12 @@ const SocialNetworks = () => {
     },
     footerLink: {
       display: "inline-block",
+      fontFamily: "Cormorant Garamond, serif",
       padding: "8px 16px",
       margin: "10px 0",
       textDecoration: "none",
       color: "#ffffff",
-      fontSize: "0.9rem",
+      fontSize: "18px",
       borderRadius: "8px",
       transition: "all 0.3s ease",
       background: "rgba(255, 255, 255, 0.08)",
@@ -126,9 +130,10 @@ const SocialNetworks = () => {
     },
     footerText: {
       color: "rgba(255, 255, 255, 0.7)",
-      fontSize: "0.8rem",
+      fontSize: "16px",
       margin: "15px 0 0",
       lineHeight: "1.5",
+      fontFamily: "Cormorant Garamond, serif",
     },
     footerStrong: {
       color: "#ffffff",
@@ -143,7 +148,7 @@ const SocialNetworks = () => {
           <ListItem key={index} sx={styles.listItem}>
             <a href={item.link} style={styles.link}>
               <ListItemIcon sx={styles.icon}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText style={styles.listItemText} primary={item.text} />
             </a>
           </ListItem>
         ))}
@@ -158,7 +163,7 @@ const SocialNetworks = () => {
           Policy Support
         </Link>
         <p style={styles.footerText}>
-          All Rights reserved © 2024 Showroom By Netanel Photography
+          All Rights reserved © 2025 Showroom By Netanel Photography
           <br />
           <strong style={styles.footerStrong}>Created by McdWebs</strong>
         </p>

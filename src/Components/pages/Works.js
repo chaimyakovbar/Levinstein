@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { COLLECTION_LIST } from "../../consts/SubjectsList";
 import useImageLoading from "../../hooks/useImageLoading";
@@ -7,59 +7,84 @@ const Works = () => {
   const navigate = useNavigate();
   const { imageWrapperStyle } = useImageLoading("image-wrapper");
 
-  const [hoveredIndex, setHoveredIndex] = useState(null); // מצב של אינדקס התמונה המועברת עליה העכבר
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const styles = {
     container: {
       display: "flex",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      gap: "20px",
+      flexDirection: "column",
+      alignItems: "center",
       padding: "20px",
       maxWidth: "1200px",
       margin: "0 auto",
     },
+    galleryContainer: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: "30px",
+      justifyContent: "center",
+      width: "100%",
+    },
     imageWrapper: {
-      width: "calc(33.33% - 20px)",
-      minWidth: "300px",
-      aspectRatio: "4/3",
+      width: "350px", // Smaller fixed width
+      aspectRatio: "1/1.2",
       position: "relative",
-      cursor: "pointer", // הוספת אצבע
-      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-      borderRadius: "8px",
+      cursor: "pointer",
       overflow: "hidden",
-      transition: "transform 0.3s ease", // מעבר חלק כשעוברים עם העכבר
       ...imageWrapperStyle,
     },
-    image: (isHovered) => ({
+    image: {
       width: "100%",
-      height: "100%",
+      height: "85%",
       objectFit: "cover",
-      transition: "transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease",
-      filter: isHovered ? "blur(5px)" : "blur(0)", // שינוי ה-blur
-      opacity: isHovered ? 0.5 : 1, // שינוי ה-opacity
-    }),
+      borderRadius: "200px 200px 0 0", // Inverted arch shape
+      backgroundColor: "transparent", // Remove #C0D3CAFF background
+    },
     label: {
       position: "absolute",
-      bottom: 0,
-      left: 0,
-      right: 0,
-      padding: "15px",
-      background: "linear-gradient(transparent, rgba(0,0,0,0.8))",
-      color: "white",
+      bottom: "0",
+      left: "0",
+      right: "0",
+      backgroundColor: "#2c3a33",
+      color: "#c5b9a5",
       textAlign: "center",
-      fontSize: "24px",
+      height: "15%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    number: {
+      position: "absolute",
+      top: "-20px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      backgroundColor: "#2c3a33",
+      padding: "0 10px",
+      fontSize: "32px",
+      fontFamily: "Cormorant Garamond, serif",
+      color: "#c5b9a5",
+      borderRadius: "50%",
+    },
+    labelText: {
+      fontSize: "18px",
+      textTransform: "uppercase",
+      letterSpacing: "3px",
+      color: "#c5b9a5",
+      marginTop: "5px",
     },
     title: {
       fontSize: "2.5rem",
       fontWeight: "bold",
       textAlign: "center",
       margin: "40px 0",
-      color: "#f5f5f5",
+      color: "#C0D3CAFF",
+      fontFamily: "Cormorant Garamond, serif",
+      textTransform: "uppercase",
     },
-    video: {
-
-    }
   };
 
   const validCollectionItems = COLLECTION_LIST.filter(
@@ -67,36 +92,28 @@ const Works = () => {
   );
 
   return (
-    <div>
+    <div style={styles.container}>
       <h1 style={styles.title}>גלריית התמונות</h1>
-      <div style={styles.container}>
+      <div style={styles.galleryContainer}>
         {validCollectionItems.map((image, index) => (
           <div
             key={image.id}
             className="image-wrapper"
             style={styles.imageWrapper}
             onClick={() => {
-              window.scrollTo(0, 0);
+              window.scrollTo({ top: 0, behavior: "smooth" });
               navigate(`/collections/${image.label}`);
             }}
-            onMouseEnter={() => setHoveredIndex(index)} // בזמן שהעכבר נכנס
-            onMouseLeave={() => setHoveredIndex(null)} // בזמן שהעכבר יוצא
           >
-            <video style={{ borderRadius: '10px', position: 'absolute', zIndex: 2, width: '60px', }} className={styles.video} autoPlay muted playsInline loop>
-              <source style={{ height: '100px' }} src={require('./tap.mp4')} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <img
-              src={image.image}
-              alt={image.label}
-              style={styles.image(hoveredIndex === index)} // רק התמונה שהעכבר עליה מקבלת את ה-blur
-            />
-            <div style={styles.label}>{image.label}</div>
-
+            <img src={image.image} alt={image.label} style={styles.image} />
+            <div style={styles.label}>
+              <div style={styles.number}>{`0${index + 1}`}</div>
+              <div style={styles.labelText}>{image.label}</div>
+            </div>
           </div>
         ))}
       </div>
-    </div >
+    </div>
   );
 };
 

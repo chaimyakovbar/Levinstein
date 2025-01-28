@@ -31,12 +31,6 @@ const AccessibilityMenu = () => {
     }
   };
 
-  const changeFontStyle = () => {
-    const nextStyle = fontStyle === "Arial" ? "Times New Roman" : "Arial";
-    setFontStyle(nextStyle);
-    document.body.style.fontFamily = nextStyle;
-  };
-
   const toggleContrast = () => {
     setHighContrast(!highContrast);
     document.body.style.backgroundColor = highContrast ? "#1a1a1a" : "#000";
@@ -77,15 +71,12 @@ const AccessibilityMenu = () => {
   return (
     <MenuContainer>
       <MenuButton onClick={toggleMenu}>
-        <AccessibilityNewIcon style={{ color: "white" }} />
+        <AccessibilityNewIcon style={{ color: "#C0D3CAFF" }} />
         {isMenuOpen}
       </MenuButton>
 
       {isMenuOpen && (
         <MenuOptions>
-          <MenuOption onClick={changeFontStyle}>
-            <TextFormatIcon /> שינוי סגנון כתב ({fontStyle})
-          </MenuOption>
           <MenuOption>
             <IconButton onClick={increaseFontSize}>
               <AddIcon />{" "}
@@ -125,9 +116,9 @@ const MenuContainer = styled.div`
 `;
 
 const MenuButton = styled.button`
-  background-color: rgb(93, 136, 186);
-  color: white;
-  border: none;
+  background-color: #2c3a33;
+  color: #c5b9a5;
+  border: 2px solid #c5b9a5;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -137,14 +128,20 @@ const MenuButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    background-color: #3d4f45;
+    transform: translateY(-2px);
+  }
 `;
 
 const MenuOptions = styled.div`
   margin-top: 10px;
-  background-color: #f1f1f1;
-  padding: 10px;
+  background-color: #2c3a33;
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  border: 2px solid #c5b9a5;
 `;
 
 const MenuOption = styled.div`
@@ -153,4 +150,22 @@ const MenuOption = styled.div`
   margin: 10px 0;
   font-size: 16px;
   cursor: pointer;
+  color: #c5b9a5;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #d6caba;
+  }
+
+  svg {
+    color: #c5b9a5;
+  }
+
+  .MuiIconButton-root {
+    color: #c5b9a5;
+
+    &:hover {
+      background-color: #3d4f45;
+    }
+  }
 `;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Drawer2 from "./Drawer2";
+import TopDrawer from "./TopDrawer";
 
 const NavBar = () => {
   const styles = {
@@ -26,10 +26,10 @@ const NavBar = () => {
     },
     brandName: {
       textDecoration: "none",
-      color: "white",
-      fontFamily: "'San Francisco', 'Roboto', sans-serif",
+      color: "#C0D3CAFF",
       fontSize: "24px",
       fontWeight: "500",
+      fontFamily: "Cormorant Garamond, serif",
       textShadow: "2px 2px 5px #FFD700",
     },
 
@@ -41,7 +41,7 @@ const NavBar = () => {
       border: "none",
       background: "none",
       cursor: "pointer",
-      color: "white",
+      color: "#C0D3CAFF",
       fontFamily: "'Roboto', sans-serif",
       marginLeft: "15px",
     },
@@ -49,11 +49,15 @@ const NavBar = () => {
 
   return (
     <div style={styles.navContainer}>
-      <Link to="/" style={styles.brandName}>
+      <Link
+        to="/"
+        style={styles.brandName}
+        onClick={() => window.scrollTo(0, 0)}
+      >
         Netanel Photography
       </Link>
-      <div style={{ position: 'absolute', right: 20 }}>
-        <Drawer2 />
+      <div style={{ position: "absolute", right: 20 }}>
+        <TopDrawer />
       </div>
     </div>
   );
