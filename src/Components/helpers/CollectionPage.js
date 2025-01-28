@@ -74,16 +74,17 @@ const CollectionPage = () => {
     container: {
       backgroundColor: "#1a1a1a",
       minHeight: "100vh",
-      padding: "60px 20px",
+      padding: "20px 10px",
       color: "#f5f5f5",
     },
     header: {
       display: "flex",
       alignItems: "center",
-      gap: "20px",
-      marginBottom: "40px",
+      gap: "15px",
+      marginBottom: "20px",
       maxWidth: "1200px",
-      margin: "0 auto 40px",
+      margin: "0 auto 20px",
+      padding: "0 10px",
     },
     backButton: {
       backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -98,17 +99,32 @@ const CollectionPage = () => {
       },
     },
     title: {
-      fontSize: "2rem",
+      fontSize: {
+        xs: "1.5rem",
+        sm: "2rem",
+      },
       fontWeight: "500",
     },
     galleryContainer: {
       maxWidth: "1200px",
       margin: "0 auto",
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-      gap: "20px",
-      padding: "0 20px",
-      gridAutoRows: "250px",
+      gridTemplateColumns: {
+        xs: "repeat(auto-fill, minmax(150px, 1fr))",
+        sm: "repeat(auto-fill, minmax(250px, 1fr))",
+      },
+      gap: {
+        xs: "10px",
+        sm: "20px",
+      },
+      padding: {
+        xs: "0 10px",
+        sm: "0 20px",
+      },
+      gridAutoRows: {
+        xs: "150px",
+        sm: "250px",
+      },
     },
     imageContainer: {
       position: "relative",
