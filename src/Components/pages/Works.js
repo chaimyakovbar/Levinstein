@@ -6,10 +6,20 @@ import useImageLoading from "../../hooks/useImageLoading";
 const Works = () => {
   const navigate = useNavigate();
   const { imageWrapperStyle } = useImageLoading("image-wrapper");
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const isMobile = windowWidth <= 768;
 
   const styles = {
     container: {
@@ -24,12 +34,13 @@ const Works = () => {
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: "30px",
+      gap: isMobile ? "15px" : "30px",
       justifyContent: "center",
       width: "100%",
     },
     imageWrapper: {
-      width: "350px", // Smaller fixed width
+      width: isMobile ? "calc(50% - 10px)" : "350px",
+      paddingTop: isMobile ? "25px" : "0",
       aspectRatio: "1/1.2",
       position: "relative",
       cursor: "pointer",
@@ -59,20 +70,20 @@ const Works = () => {
     },
     number: {
       position: "absolute",
-      top: "-20px",
+      top: isMobile ? "-15px" : "-20px",
       left: "50%",
       transform: "translateX(-50%)",
       backgroundColor: "#2c3a33",
       padding: "0 10px",
-      fontSize: "32px",
+      fontSize: isMobile ? "24px" : "32px",
       fontFamily: "Cormorant Garamond, serif",
       color: "#c5b9a5",
       borderRadius: "50%",
     },
     labelText: {
-      fontSize: "18px",
+      fontSize: isMobile ? "14px" : "18px",
       textTransform: "uppercase",
-      letterSpacing: "3px",
+      letterSpacing: isMobile ? "2px" : "3px",
       color: "#c5b9a5",
       marginTop: "5px",
     },
