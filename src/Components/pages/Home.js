@@ -4,7 +4,7 @@ import Works from "./Works";
 import AboutSection from "../helpers/AboutSection";
 import SocialNetworks from "../helpers/SocialNetworks";
 import CarouselCollections from "./CarouselCollections";
-import WaveDivider from "../helpers/WaveDivider";
+// import WaveDivider from "../helpers/WaveDivider";
 
 const Home = () => {
   const styles = {
