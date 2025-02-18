@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { COLLECTION_LIST } from "../../consts/SubjectsList";
+import { initializeCollections } from "../../consts/S3Config";
 import useImageLoading from "../../hooks/useImageLoading";
 
 const Works = () => {
   const navigate = useNavigate();
   const { imageWrapperStyle } = useImageLoading("image-wrapper");
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [collectionList, setCollectionList] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -15,6 +16,13 @@ const Works = () => {
       setWindowWidth(window.innerWidth);
     };
 
+    const loadCollections = async () => {
+      const { COLLECTION_LIST } = await initializeCollections();
+      console.log('Loaded collections:', COLLECTION_LIST);
+      setCollectionList(COLLECTION_LIST);
+    };
+
+    loadCollections();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -98,7 +106,7 @@ const Works = () => {
     },
   };
 
-  const validCollectionItems = COLLECTION_LIST.filter(
+  const validCollectionItems = collectionList.filter(
     (item) => item && item.image && item.label
   );
 

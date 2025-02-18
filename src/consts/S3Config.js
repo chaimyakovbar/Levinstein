@@ -1,11 +1,15 @@
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
-  region: process.env.REGION,
+  region: "eu-north-1",
+  credentials: {
+    accessKeyId: "AKIAYEKP5YGTHSDIIIGB",
+    secretAccessKey: "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"
+  }
 });
 
 const S3_CONFIG = {
-  bucketName: process.env.BUCKET_NAME,
+  bucketName: "netanelprojects",
   folders: {
     designs: "designs/",
     circumcision: "circumcision/",
@@ -45,7 +49,12 @@ async function listFolderObjects(folderPrefix) {
     });
     
     const response = await s3Client.send(command);
-    return response.Contents || [];
+    // Transform the S3 response into the format your components expect
+    return response.Contents.map(item => ({
+      id: item.Key,
+      image: `https://${S3_CONFIG.bucketName}.s3.${S3_CONFIG.region}.amazonaws.com/${item.Key}`,
+      label: item.Key.split('/')[0] // or however you want to structure the label
+    })) || [];
   } catch (error) {
     console.error(`Error listing objects in ${folderPrefix}:`, error);
     return [];
@@ -62,7 +71,7 @@ async function createImageBatches(folderKey, label, startId) {
       .map((object, index) => ({
         id: startId + i + index,
         label,
-        image: getS3ObjectUrl(object.Key),
+        image: getS3ObjectUrl(object.id),
         collection: folderKey,
       }));
     batches.push(batchImages);
@@ -86,7 +95,7 @@ async function initializeCollections() {
       const initialImages = objects.slice(0, 4).map((object, index) => ({
         id: currentStartId + index,
         label: collectionLabels[key],
-        image: getS3ObjectUrl(object.Key),
+        image: getS3ObjectUrl(object.id),
         collection: key,
       }));
       initialBatches.push(...initialImages);
@@ -102,7 +111,7 @@ async function initializeCollections() {
         collectionList.push({
           id: key === "designs" ? 1 : currentStartId,
           label: collectionLabels[key],
-          image: getS3ObjectUrl(objects[0].Key),
+          image: getS3ObjectUrl(objects[0].id),
           collection: key,
         });
       }
@@ -125,7 +134,7 @@ async function getCarouselList() {
   const objects = await listFolderObjects(S3_CONFIG.folders.carousel);
   return objects.map((object, index) => ({
     id: index + 1,
-    image: getS3ObjectUrl(object.Key),
+    image: getS3ObjectUrl(object.id),
     collection: "carousel",
   }));
 }

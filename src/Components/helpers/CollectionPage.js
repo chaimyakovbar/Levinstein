@@ -4,7 +4,7 @@ import { Button, Box, Typography, CircularProgress } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Blurhash } from "react-blurhash";
-import { IMAGE_LIST, REMAINING_BATCHES } from "../../consts/SubjectsList";
+import { initializeCollections } from "../../consts/S3Config";
 import DialogForImage from "./Dialog";
 import useImageLoading from "../../hooks/useImageLoading";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
@@ -19,36 +19,48 @@ const CollectionPage = () => {
   const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
+  const [initialImages, setInitialImages] = useState([]);
+  const [remainingBatches, setRemainingBatches] = useState([]);
   const isNearBottom = useInfiniteScroll();
 
   const { label } = useParams();
   const navigate = useNavigate();
   const { imageWrapperStyle } = useImageLoading("collection-image");
 
-  const initialImages = useMemo(
-    () => IMAGE_LIST.filter((item) => item.label === label),
-    [label]
-  );
-
   const imageUrls = images.map((image) => image.image);
   const { dimensions: imageDimensions, loading: imageDimensionsLoading } =
     useImageDimensions(imageUrls);
 
+  // Load initial data
+  useEffect(() => {
+    const loadData = async () => {
+      const { IMAGE_LIST, REMAINING_BATCHES } = await initializeCollections();
+      const filteredInitialImages = IMAGE_LIST.filter((item) => item.label === label);
+      setInitialImages(filteredInitialImages);
+      setRemainingBatches(REMAINING_BATCHES);
+      setImages(filteredInitialImages.slice(0, IMAGES_PER_BATCH));
+      setCurrentBatchIndex(0);
+      setAllLoaded(false);
+    };
+    loadData();
+  }, [label]);
+
+  // Modify the loadNextBatch logic
   useEffect(() => {
     const loadNextBatch = async () => {
       if (loading || allLoaded || !isNearBottom) return;
 
       try {
         setLoading(true);
-        const remainingBatches = REMAINING_BATCHES.slice(currentBatchIndex);
-        const nextImages = remainingBatches
+        const remainingImages = remainingBatches
+          .slice(currentBatchIndex)
           .flat()
           .filter((img) => img.label === label)
           .slice(0, IMAGES_PER_BATCH);
 
-        if (nextImages.length > 0) {
+        if (remainingImages.length > 0) {
           await new Promise((resolve) => setTimeout(resolve, 300));
-          setImages((prevImages) => [...prevImages, ...nextImages]);
+          setImages((prevImages) => [...prevImages, ...remainingImages]);
           setCurrentBatchIndex((prev) => prev + 1);
         } else {
           setAllLoaded(true);
@@ -61,14 +73,7 @@ const CollectionPage = () => {
     };
 
     loadNextBatch();
-  }, [isNearBottom, currentBatchIndex, loading, allLoaded, label]);
-
-  // Initial load
-  useEffect(() => {
-    setImages(initialImages.slice(0, IMAGES_PER_BATCH));
-    setCurrentBatchIndex(0);
-    setAllLoaded(false);
-  }, [label, initialImages]);
+  }, [isNearBottom, currentBatchIndex, loading, allLoaded, label, remainingBatches]);
 
   const styles = {
     container: {
