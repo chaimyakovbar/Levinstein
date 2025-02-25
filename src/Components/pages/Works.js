@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { initializeCollections } from "../../consts/S3Config";
 import useImageLoading from "../../hooks/useImageLoading";
+import { COLLECTION_LIST } from "../../consts/SubjectsList";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const Works = () => {
   const navigate = useNavigate();
   const { imageWrapperStyle } = useImageLoading("image-wrapper");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [collectionList, setCollectionList] = useState([]);
+  const [collectionList, setCollectionList] = useState(COLLECTION_LIST);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -16,15 +18,8 @@ const Works = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    const loadCollections = async () => {
-      const { COLLECTION_LIST } = await initializeCollections();
-      console.log('Loaded collections:', COLLECTION_LIST);
-      setCollectionList(COLLECTION_LIST);
-    };
-
-    loadCollections();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const isMobile = windowWidth <= 768;
@@ -59,8 +54,8 @@ const Works = () => {
       width: "100%",
       height: "85%",
       objectFit: "cover",
-      borderRadius: "200px 200px 0 0", // Inverted arch shape
-      backgroundColor: "transparent", // Remove #C0D3CAFF background
+      borderRadius: "200px 200px 0 0",
+      backgroundColor: "transparent",
     },
     label: {
       position: "absolute",
@@ -106,25 +101,27 @@ const Works = () => {
     },
   };
 
-  const validCollectionItems = collectionList.filter(
-    (item) => item && item.image && item.label
-  );
-
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>גלריית התמונות</h1>
       <div style={styles.galleryContainer}>
-        {validCollectionItems.map((image, index) => (
+        {collectionList.map((image, index) => (
           <div
             key={image.id}
             className="image-wrapper"
             style={styles.imageWrapper}
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
-              navigate(`/collections/${image.label}`);
+              navigate(`/collections/${image.collection}`);
             }}
           >
-            <img src={image.image} alt={image.label} style={styles.image} />
+            {/* Use LazyLoadImage instead of <img> */}
+            <LazyLoadImage
+              src={image.image}
+              alt={image.label}
+              effect="blur"
+              style={styles.image}
+            />
             <div style={styles.label}>
               <div style={styles.number}>{`0${index + 1}`}</div>
               <div style={styles.labelText}>{image.label}</div>

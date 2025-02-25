@@ -5,6 +5,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Box } from "@mui/material";
 import useImagePreloader from "../../hooks/useImagePreloader";
+import { testConnection } from '../../api/index'
 
 const CarouselCollections = () => {
   const { imagesPreloaded } = useImagePreloader();
@@ -102,6 +103,7 @@ const CarouselCollections = () => {
           </div>
         ))}
       </Slider>
+      {testConnection}
     </Box>
   );
 };

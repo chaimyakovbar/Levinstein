@@ -1,265 +1,82 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button, Box, Typography, CircularProgress } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Blurhash } from "react-blurhash";
-import { initializeCollections } from "../../consts/S3Config";
-import DialogForImage from "./Dialog";
-import useImageLoading from "../../hooks/useImageLoading";
-import useInfiniteScroll from "../../hooks/useInfiniteScroll";
-import useImageDimensions from "../../hooks/useImageDimensions";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
-const IMAGES_PER_BATCH = 12;
+const imageCollections = {
+  designs: require.context("../../assets/images/designs", false, /\.(png|jpe?g|svg)$/),
+  circumcision: require.context("../../assets/images/circumcision", false, /\.(png|jpe?g|svg)$/),
+  bar_miztva: require.context("../../assets/images/bar_miztva", false, /\.(png|jpe?g|svg)$/),
+  bat_miztva: require.context("../../assets/images/bat_miztva", false, /\.(png|jpe?g|svg)$/),
+  wedding: require.context("../../assets/images/wedding", false, /\.(png|jpe?g|svg)$/),
+  engagement: require.context("../../assets/images/engagement", false, /\.(png|jpe?g|svg)$/),
+  tefilin: require.context("../../assets/images/tefilin", false, /\.(png|jpe?g|svg)$/),
+  business: require.context("../../assets/images/business", false, /\.(png|jpe?g|svg)$/),
+};
+
+const collectionLabels = {
+  designs: "תפאורה",
+  circumcision: "ברית מילה",
+  bar_miztva: "בר מצווה",
+  bat_miztva: "בת מצווה",
+  wedding: "חתונה",
+  engagement: "אירוסין",
+  tefilin: "הנחת תפילין",
+  business: "עסקים",
+};
 
 const CollectionPage = () => {
-  const [selectedImages, setSelectedImages] = useState(null);
-  const [images, setImages] = useState([]);
-  const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [allLoaded, setAllLoaded] = useState(false);
-  const [initialImages, setInitialImages] = useState([]);
-  const [remainingBatches, setRemainingBatches] = useState([]);
-  const isNearBottom = useInfiniteScroll();
-
-  const { label } = useParams();
-  const navigate = useNavigate();
-  const { imageWrapperStyle } = useImageLoading("collection-image");
-
-  const imageUrls = images.map((image) => image.image);
-  const { dimensions: imageDimensions, loading: imageDimensionsLoading } =
-    useImageDimensions(imageUrls);
-
-  // Load initial data
-  useEffect(() => {
-    const loadData = async () => {
-      const { IMAGE_LIST, REMAINING_BATCHES } = await initializeCollections();
-      const filteredInitialImages = IMAGE_LIST.filter((item) => item.label === label);
-      setInitialImages(filteredInitialImages);
-      setRemainingBatches(REMAINING_BATCHES);
-      setImages(filteredInitialImages.slice(0, IMAGES_PER_BATCH));
-      setCurrentBatchIndex(0);
-      setAllLoaded(false);
-    };
-    loadData();
-  }, [label]);
-
-  // Modify the loadNextBatch logic
-  useEffect(() => {
-    const loadNextBatch = async () => {
-      if (loading || allLoaded || !isNearBottom) return;
-
-      try {
-        setLoading(true);
-        const remainingImages = remainingBatches
-          .slice(currentBatchIndex)
-          .flat()
-          .filter((img) => img.label === label)
-          .slice(0, IMAGES_PER_BATCH);
-
-        if (remainingImages.length > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          setImages((prevImages) => [...prevImages, ...remainingImages]);
-          setCurrentBatchIndex((prev) => prev + 1);
-        } else {
-          setAllLoaded(true);
-        }
-      } catch (error) {
-        console.error("Error in loadNextBatch:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadNextBatch();
-  }, [isNearBottom, currentBatchIndex, loading, allLoaded, label, remainingBatches]);
-
-  const styles = {
-    container: {
-      backgroundColor: "#1a1a1a",
-      minHeight: "100vh",
-      padding: "20px 10px",
-      color: "#f5f5f5",
-    },
-    header: {
-      display: "flex",
-      alignItems: "center",
-      gap: "15px",
-      marginBottom: "20px",
-      maxWidth: "1200px",
-      margin: "0 auto 20px",
-      padding: "0 10px",
-    },
-    backButton: {
-      backgroundColor: "rgba(255, 255, 255, 0.1)",
-      color: "#f5f5f5",
-      borderRadius: "50%",
-      minWidth: "40px",
-      width: "40px",
-      height: "40px",
-      padding: "8px",
-      "&:hover": {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-      },
-    },
-    title: {
-      fontSize: {
-        xs: "1.5rem",
-        sm: "2rem",
-      },
-      fontWeight: "500",
-    },
-    galleryContainer: {
-      maxWidth: "1200px",
-      margin: "0 auto",
-      display: "grid",
-      gridTemplateColumns: {
-        xs: "repeat(auto-fill, minmax(150px, 1fr))",
-        sm: "repeat(auto-fill, minmax(250px, 1fr))",
-      },
-      gap: {
-        xs: "10px",
-        sm: "20px",
-      },
-      padding: {
-        xs: "0 10px",
-        sm: "0 20px",
-      },
-      gridAutoRows: {
-        xs: "150px",
-        sm: "250px",
-      },
-    },
-    imageContainer: {
-      position: "relative",
-      borderRadius: "12px",
-      overflow: "hidden",
-      cursor: "pointer",
-      backgroundColor: "#2a2a2a",
-      ...imageWrapperStyle,
-    },
-    image: {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      transition: "transform 0.3s ease",
-      "&:hover": {
-        transform: "scale(1.05)",
-      },
-    },
-    loadingContainer: {
-      display: "flex",
-      justifyContent: "center",
-      padding: "20px",
-      width: "100%",
-      gridColumn: "1 / -1",
-    },
-    endMessage: {
-      textAlign: "center",
-      padding: "20px",
-      color: "#f5f5f5",
-      width: "100%",
-      gridColumn: "1 / -1",
-    },
-  };
-
-  if (!initialImages.length) {
-    return <Box sx={styles.container}>Collection not found.</Box>;
-  }
+  const [selectedCollection, setSelectedCollection] = useState(null);
 
   return (
-    <Box sx={styles.container}>
-      <Box sx={styles.header}>
-        <Button sx={styles.backButton} onClick={() => navigate("/")}>
-          <ArrowBack />
-        </Button>
-        <Typography sx={styles.title}>{label}</Typography>
+    <Box sx={{ backgroundColor: "#1a1a1a", minHeight: "100vh", padding: "20px", color: "#f5f5f5" }}>
+      {/* כותרת */}
+      <Typography variant="h4" sx={{ textAlign: "center", marginBottom: "20px" }}>
+        גלריית תמונות
+      </Typography>
+
+      {/* כפתורי בחירת קטגוריות */}
+      <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "10px", marginBottom: "20px" }}>
+        {Object.keys(collectionLabels).map((key) => (
+          <Button
+            key={key}
+            onClick={() => setSelectedCollection(key)}
+            sx={{
+              backgroundColor: selectedCollection === key ? "#f5f5f5" : "rgba(255, 255, 255, 0.2)",
+              color: selectedCollection === key ? "#1a1a1a" : "#f5f5f5",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.3)" },
+            }}
+          >
+            {collectionLabels[key]}
+          </Button>
+        ))}
       </Box>
 
-      <Box sx={styles.galleryContainer}>
-        {images.map((image, index) => {
-          const { width, height } = imageDimensions[index] || {};
-          const aspectRatio = width / height;
-
-          let spanConfig = {};
-          if (aspectRatio > 1.5) {
-            // Very wide images
-            spanConfig = {
-              gridColumn: "span 2",
-              gridRow: "span 1",
-            };
-          } else if (aspectRatio < 0.9) {
-            // Very tall images
-            spanConfig = {
-              gridColumn: "span 1",
-              gridRow: "span 2",
-            };
-          } else {
-            // Normal aspect ratio images
-            spanConfig = {
-              gridColumn: "span 1",
-              gridRow: "span 1",
-            };
-          }
-
-          const imageStyle = {
-            ...styles.imageContainer,
-            ...spanConfig,
-          };
-
-          return (
-            <Box
-              key={index}
-              className="collection-image"
-              sx={imageStyle}
-              onClick={() => setSelectedImages(image)}
-            >
-              <LazyLoadImage
-                src={image.image}
-                alt={image.label}
-                width="100%"
-                height="100%"
-                effect="blur"
-                placeholder={
-                  <Blurhash
-                    hash="LEHV6nWB2yk8pyo0adR*.7kCMdnj"
-                    width="100%"
-                    height="100%"
-                    resolutionX={32}
-                    resolutionY={32}
-                    punch={1}
-                  />
-                }
-                style={{
-                  objectFit: "cover",
-                  width: "100%",
-                  height: "100%",
-                  transition: "transform 0.3s ease",
-                  "&:hover": {
-                    transform: "scale(1.05)",
-                  },
-                }}
-              />
-            </Box>
-          );
-        })}
-
-        {imageDimensionsLoading && (
-          <Box sx={styles.loadingContainer}>
-            <CircularProgress size={40} sx={{ color: "#f5f5f5" }} />
-          </Box>
-        )}
-      </Box>
-
-      {selectedImages && (
-        <DialogForImage
-          open={!!selectedImages}
-          onClose={() => setSelectedImages(null)}
-          image={selectedImages}
-          allImages={images}
-        />
+      {/* תצוגת התמונות */}
+      {selectedCollection && (
+        <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
+          <Typography variant="h5">{collectionLabels[selectedCollection]}</Typography>
+        </Box>
       )}
+
+      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "15px", maxWidth: "1200px", margin: "0 auto" }}>
+        {selectedCollection &&
+          imageCollections[selectedCollection]
+            .keys()
+            .map((imagePath, index) => (
+              <Box key={index} sx={{ borderRadius: "12px", overflow: "hidden", backgroundColor: "#2a2a2a" }}>
+                {/* Use LazyLoadImage instead of <img> */}
+                <LazyLoadImage
+                  src={imageCollections[selectedCollection](imagePath)}
+                  alt={collectionLabels[selectedCollection]}
+                  effect="blur"
+                  style={{ width: "100%", height: "auto", objectFit: "cover" }}
+                />
+              </Box>
+            ))}
+      </Box>
     </Box>
   );
 };
