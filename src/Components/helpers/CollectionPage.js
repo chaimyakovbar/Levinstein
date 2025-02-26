@@ -30,12 +30,10 @@ const CollectionPage = () => {
 
   return (
     <Box sx={{ backgroundColor: "#1a1a1a", minHeight: "100vh", padding: "20px", color: "#f5f5f5" }}>
-      {/* כותרת */}
       <Typography variant="h4" sx={{ textAlign: "center", marginBottom: "20px" }}>
         גלריית תמונות
       </Typography>
 
-      {/* כפתורי בחירת קטגוריות */}
       <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "10px", marginBottom: "20px" }}>
         {Object.keys(collectionLabels).map((key) => (
           <Button
@@ -54,7 +52,6 @@ const CollectionPage = () => {
         ))}
       </Box>
 
-      {/* תצוגת התמונות */}
       {selectedCollection && (
         <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
           <Typography variant="h5">{collectionLabels[selectedCollection]}</Typography>
@@ -65,17 +62,32 @@ const CollectionPage = () => {
         {selectedCollection &&
           imageCollections[selectedCollection]
             .keys()
-            .map((imagePath, index) => (
-              <Box key={index} sx={{ borderRadius: "12px", overflow: "hidden", backgroundColor: "#2a2a2a" }}>
-                {/* Use LazyLoadImage instead of <img> */}
-                <LazyLoadImage
-                  src={imageCollections[selectedCollection](imagePath)}
-                  alt={collectionLabels[selectedCollection]}
-                  effect="blur"
-                  style={{ width: "100%", height: "auto", objectFit: "cover" }}
-                />
-              </Box>
-            ))}
+            .map((imagePath, index) => {
+              const imgSrc = imageCollections[selectedCollection](imagePath);
+              const img = new Image();
+              img.src = imgSrc;
+              const aspectRatio = img.width / img.height;
+              let spanConfig = {};
+              
+              if (aspectRatio > 1.5) {
+                spanConfig = { gridColumn: "span 2", gridRow: "span 1" };
+              } else if (aspectRatio < 0.9) {
+                spanConfig = { gridColumn: "span 1", gridRow: "span 2" };
+              } else {
+                spanConfig = { gridColumn: "span 1", gridRow: "span 1" };
+              }
+              
+              return (
+                <Box key={index} sx={{ borderRadius: "12px", overflow: "hidden", backgroundColor: "#2a2a2a", ...spanConfig }}>
+                  <LazyLoadImage
+                    src={imgSrc}
+                    alt={collectionLabels[selectedCollection]}
+                    effect="blur"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </Box>
+              );
+            })}
       </Box>
     </Box>
   );
