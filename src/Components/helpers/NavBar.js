@@ -27,10 +27,17 @@ const NavBar = () => {
     brandName: {
       textDecoration: "none",
       color: "#C0D3CAFF",
-      fontSize: "24px",
-      fontWeight: "500",
-      fontFamily: "Cormorant Garamond, serif",
-      textShadow: "2px 2px 5px #FFD700",
+      fontSize: "28px",
+      fontWeight: "600",
+      fontFamily: "'Cormorant Garamond', serif",
+      textShadow: "2px 2px 8px rgba(192, 211, 202, 0.4)",
+      letterSpacing: "2px",
+      transition: "all 0.3s ease",
+      "&:hover": {
+        color: "#D4E4DCFF",
+        textShadow: "2px 2px 12px rgba(192, 211, 202, 0.6)",
+        transform: "scale(1.02)",
+      },
     },
 
     drawerContainer: {

@@ -51,8 +51,8 @@ const Works = () => {
       width: "100%",
       height: "85%",
       objectFit: "cover",
-      borderRadius: "200px 200px 0 0", // Inverted arch shape
-      backgroundColor: "transparent", // Remove #C0D3CAFF background
+      borderRadius: "200px 200px 0 0",
+      backgroundColor: "transparent",
     },
     label: {
       position: "absolute",
