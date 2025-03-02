@@ -34,21 +34,29 @@ const CollectionPage = () => {
   const { dimensions: imageDimensions, loading: imageDimensionsLoading } =
     useImageDimensions(imageUrls);
 
+  // Initial load
+  useEffect(() => {
+    setImages(initialImages.slice(0, IMAGES_PER_BATCH));
+    setCurrentBatchIndex(0);
+    setAllLoaded(false);
+  }, [label, initialImages]);
+
+  // Load next batch
   useEffect(() => {
     const loadNextBatch = async () => {
       if (loading || allLoaded || !isNearBottom) return;
 
       try {
         setLoading(true);
-        const remainingBatches = REMAINING_BATCHES.slice(currentBatchIndex);
-        const nextImages = remainingBatches
-          .flat()
-          .filter((img) => img.label === label)
-          .slice(0, IMAGES_PER_BATCH);
+        const batch = REMAINING_BATCHES[currentBatchIndex];
 
-        if (nextImages.length > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          setImages((prevImages) => [...prevImages, ...nextImages]);
+        if (batch) {
+          const matchingImages = batch.filter((img) => img.label === label);
+
+          if (matchingImages.length > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            setImages((prevImages) => [...prevImages, ...matchingImages]);
+          }
           setCurrentBatchIndex((prev) => prev + 1);
         } else {
           setAllLoaded(true);
@@ -63,28 +71,23 @@ const CollectionPage = () => {
     loadNextBatch();
   }, [isNearBottom, currentBatchIndex, loading, allLoaded, label]);
 
-  // Initial load
-  useEffect(() => {
-    setImages(initialImages.slice(0, IMAGES_PER_BATCH));
-    setCurrentBatchIndex(0);
-    setAllLoaded(false);
-  }, [label, initialImages]);
-
   const styles = {
     container: {
       backgroundColor: "#1a1a1a",
       minHeight: "100vh",
-      padding: "20px 10px",
+      padding: "20px",
       color: "#f5f5f5",
+      width: "100%",
+      boxSizing: "border-box",
+      overflowX: "hidden",
     },
     header: {
       display: "flex",
       alignItems: "center",
       gap: "15px",
       marginBottom: "20px",
-      maxWidth: "1200px",
-      margin: "0 auto 20px",
-      padding: "0 10px",
+      padding: "0 20px",
+      width: "100%",
     },
     backButton: {
       backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -106,16 +109,15 @@ const CollectionPage = () => {
       fontWeight: "500",
     },
     galleryContainer: {
-      maxWidth: "1200px",
-      margin: "0 auto",
+      width: "100%",
       display: "grid",
       gridTemplateColumns: {
         xs: "repeat(auto-fill, minmax(150px, 1fr))",
         sm: "repeat(auto-fill, minmax(250px, 1fr))",
       },
       gap: {
-        xs: "10px",
-        sm: "20px",
+        xs: "5px",
+        sm: "10px",
       },
       padding: {
         xs: "0 10px",
@@ -128,7 +130,6 @@ const CollectionPage = () => {
     },
     imageContainer: {
       position: "relative",
-      borderRadius: "12px",
       overflow: "hidden",
       cursor: "pointer",
       backgroundColor: "#2a2a2a",
@@ -147,13 +148,6 @@ const CollectionPage = () => {
       display: "flex",
       justifyContent: "center",
       padding: "20px",
-      width: "100%",
-      gridColumn: "1 / -1",
-    },
-    endMessage: {
-      textAlign: "center",
-      padding: "20px",
-      color: "#f5f5f5",
       width: "100%",
       gridColumn: "1 / -1",
     },

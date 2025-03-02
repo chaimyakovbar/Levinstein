@@ -60,26 +60,7 @@ const collectionLabels = {
 
 const BATCH_SIZE = 24;
 
-const createImageBatches = (context, label, collection, startId) => {
-  const allImages = context.keys();
-  const batches = [];
-
-  for (let i = 0; i < allImages.length; i += BATCH_SIZE) {
-    const batchImages = allImages
-      .slice(i, i + BATCH_SIZE)
-      .map((image, index) => ({
-        id: startId + i + index,
-        label,
-        image: context(image),
-        collection,
-      }));
-    batches.push(batchImages);
-  }
-
-  return batches;
-};
-
-// Create initial batch with images from all collections
+// Create initial batch with first 4 images from each collection
 let currentStartId = 1;
 const initialBatches = Object.entries(imageCollections).reduce(
   (acc, [key, context]) => {
@@ -93,7 +74,7 @@ const initialBatches = Object.entries(imageCollections).reduce(
         image: context(image),
         collection: key,
       }));
-      currentStartId += context.keys().length;
+      currentStartId += 4; // Only increment by 4 since we're taking 4 images
       return [...acc, ...batchImages];
     } catch (error) {
       console.error(`Error processing collection ${key}:`, error);
@@ -103,19 +84,40 @@ const initialBatches = Object.entries(imageCollections).reduce(
   []
 );
 
+// Modified createImageBatches to work with specific image keys
+const createImageBatches = (imageKeys, context, label, collection, startId) => {
+  const batches = [];
+  for (let i = 0; i < imageKeys.length; i += BATCH_SIZE) {
+    const batchImages = imageKeys
+      .slice(i, i + BATCH_SIZE)
+      .map((image, index) => ({
+        id: startId + i + index,
+        label,
+        image: context(image),
+        collection,
+      }));
+    batches.push(batchImages);
+  }
+  return batches;
+};
+
+// Create remaining batches starting after the initial 4 images
 const remainingBatches = Object.entries(imageCollections).reduce(
   (acc, [key, context]) => {
     if (key === "carousel") return acc;
 
     try {
-      const images = context.keys().slice(4);
+      const remainingImages = context.keys().slice(4); // Get all images after the first 4
+      if (remainingImages.length === 0) return acc;
+
       const batches = createImageBatches(
+        remainingImages,
         context,
         collectionLabels[key],
         key,
         currentStartId
       );
-      currentStartId += images.length;
+      currentStartId += remainingImages.length;
       return [...acc, ...batches];
     } catch (error) {
       console.error(`Error processing collection ${key}:`, error);

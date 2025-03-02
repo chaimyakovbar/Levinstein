@@ -1,104 +1,179 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
-import TextFormatIcon from "@mui/icons-material/TextFormat";
+import CloseIcon from "@mui/icons-material/Close";
+
+// Constants
+const INITIAL_SETTINGS = {
+  fontSize: 16,
+  highContrast: false,
+  invertedContrast: false,
+  grayscale: false,
+  highlightLinks: false,
+};
+
+const MIN_FONT_SIZE = 12;
+const MAX_FONT_SIZE = 24;
+const BASE_FONT_SIZE = 16;
 
 const AccessibilityMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [fontSize, setFontSize] = useState(16);
-  const [fontStyle, setFontStyle] = useState("Arial");
-  const [highContrast, setHighContrast] = useState(false);
-  const [invertedContrast, setInvertedContrast] = useState(false);
-  const [grayscale, setGrayscale] = useState(false);
-  const [highlightLinks, setHighlightLinks] = useState(false);
+  const [settings, setSettings] = useState(INITIAL_SETTINGS);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const increaseFontSize = () => {
-    setFontSize((prevSize) => prevSize + 2);
-    document.body.style.fontSize = `${fontSize + 2}px`;
-  };
-
-  const decreaseFontSize = () => {
-    if (fontSize > 12) {
-      setFontSize((prevSize) => prevSize - 2);
-      document.body.style.fontSize = `${fontSize - 2}px`;
+  // Load saved settings on mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem("accessibilitySettings");
+    if (savedSettings) {
+      const parsedSettings = JSON.parse(savedSettings);
+      setSettings(parsedSettings);
+      applySettings(parsedSettings);
     }
+  }, []);
+
+  // Save settings when they change
+  useEffect(() => {
+    localStorage.setItem("accessibilitySettings", JSON.stringify(settings));
+    applySettings(settings);
+  }, [settings]);
+
+  const applySettings = (currentSettings) => {
+    // Update to use rem units for better scaling
+    const htmlElement = document.documentElement;
+    const bodyElement = document.body;
+
+    // Set base font size on HTML element (1rem = 16px by default)
+    htmlElement.style.fontSize = `${currentSettings.fontSize}px`;
+
+    // Apply to both body and main content container if it exists
+    bodyElement.style.fontSize = "1rem";
+    const mainContent = document.getElementById("root"); // or your main content wrapper
+    if (mainContent) {
+      mainContent.style.fontSize = "1rem";
+    }
+
+    // Apply contrast settings
+    document.body.style.backgroundColor = currentSettings.highContrast
+      ? "#000"
+      : "#1a1a1a";
+    document.body.style.color = currentSettings.highContrast ? "#fff" : "#000";
+
+    // Apply filters
+    const filters = [];
+    if (currentSettings.invertedContrast) filters.push("invert(100%)");
+    if (currentSettings.grayscale) filters.push("grayscale(100%)");
+    document.body.style.filter = filters.length ? filters.join(" ") : "none";
+
+    // Apply link highlighting
+    const links = document.querySelectorAll("a");
+    links.forEach((link) => {
+      link.style.textDecoration = currentSettings.highlightLinks
+        ? "underline"
+        : "none";
+      link.style.color = currentSettings.highlightLinks ? "yellow" : "inherit";
+    });
   };
 
-  const toggleContrast = () => {
-    setHighContrast(!highContrast);
-    document.body.style.backgroundColor = highContrast ? "#1a1a1a" : "#000";
-    document.body.style.color = highContrast ? "#000" : "#fff";
+  const updateSetting = (key, value) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleInvertedContrast = () => {
-    setInvertedContrast(!invertedContrast);
-    document.body.style.filter = invertedContrast ? "none" : "invert(100%)";
-  };
-
-  const toggleGrayscale = () => {
-    setGrayscale(!grayscale);
-    document.body.style.filter = grayscale ? "none" : "grayscale(100%)";
+  const adjustFontSize = (increment) => {
+    setSettings((prev) => {
+      const newSize = Math.min(
+        MAX_FONT_SIZE,
+        Math.max(MIN_FONT_SIZE, prev.fontSize + increment)
+      );
+      return {
+        ...prev,
+        fontSize: newSize,
+      };
+    });
   };
 
   const resetSettings = () => {
-    setFontSize(16);
-    setFontStyle("Arial");
-    setHighContrast(false);
-    setInvertedContrast(false);
-    setGrayscale(false);
-    document.body.style.fontSize = "16px";
-    document.body.style.backgroundColor = "#1a1a1a";
-    document.body.style.color = "#000";
-    document.body.style.filter = "none";
-  };
-
-  const toggleHighlightLinks = () => {
-    setHighlightLinks(!highlightLinks);
-    const links = document.querySelectorAll("a");
-    links.forEach((link) => {
-      link.style.textDecoration = highlightLinks ? "none" : "underline";
-      link.style.color = highlightLinks ? "inherit" : "yellow";
-    });
+    setSettings(INITIAL_SETTINGS);
   };
 
   return (
     <MenuContainer>
-      <MenuButton onClick={toggleMenu}>
-        <AccessibilityNewIcon style={{ color: "#C0D3CAFF" }} />
-        {isMenuOpen}
-      </MenuButton>
+      <Tooltip title="תפריט נגישות" placement="left">
+        <MenuButton
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-expanded={isMenuOpen}
+          aria-label="תפריט נגישות"
+        >
+          {isMenuOpen ? <CloseIcon /> : <AccessibilityNewIcon />}
+        </MenuButton>
+      </Tooltip>
 
       {isMenuOpen && (
-        <MenuOptions>
+        <MenuOptions role="menu">
           <MenuOption>
-            <IconButton onClick={increaseFontSize}>
-              <AddIcon />{" "}
-              <p style={{ fontSize: "20px", marginLeft: "13px" }}>גודל הכתב</p>
-            </IconButton>
-            <IconButton onClick={decreaseFontSize}>
-              <RemoveIcon />
-            </IconButton>
+            <OptionLabel>גודל הכתב</OptionLabel>
+            <ButtonGroup>
+              <Tooltip title="הגדל גודל גופן">
+                <IconButton
+                  onClick={() => adjustFontSize(2)}
+                  disabled={settings.fontSize >= MAX_FONT_SIZE}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="הקטן גודל גופן">
+                <IconButton
+                  onClick={() => adjustFontSize(-2)}
+                  disabled={settings.fontSize <= MIN_FONT_SIZE}
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </Tooltip>
+            </ButtonGroup>
           </MenuOption>
-          <MenuOption onClick={toggleContrast}>
-            {highContrast ? "כבה ניגודיות גבוהה" : "הפעל ניגודיות גבוהה"}
+
+          <MenuOption
+            onClick={() =>
+              updateSetting("highContrast", !settings.highContrast)
+            }
+            role="menuitem"
+          >
+            {settings.highContrast
+              ? "כבה ניגודיות גבוהה"
+              : "הפעל ניגודיות גבוהה"}
           </MenuOption>
-          <MenuOption onClick={toggleInvertedContrast}>
-            {invertedContrast ? "כבה ניגודיות הפוכה" : "הפעל ניגודיות הפוכה"}
+
+          <MenuOption
+            onClick={() =>
+              updateSetting("invertedContrast", !settings.invertedContrast)
+            }
+            role="menuitem"
+          >
+            {settings.invertedContrast
+              ? "כבה ניגודיות הפוכה"
+              : "הפעל ניגודיות הפוכה"}
           </MenuOption>
-          <MenuOption onClick={toggleGrayscale}>
-            {grayscale ? "כבה גווני אפור" : "הפעל גווני אפור"}
+
+          <MenuOption
+            onClick={() => updateSetting("grayscale", !settings.grayscale)}
+            role="menuitem"
+          >
+            {settings.grayscale ? "כבה גווני אפור" : "הפעל גווני אפור"}
           </MenuOption>
-          <MenuOption onClick={toggleHighlightLinks}>
-            {highlightLinks ? "כבה הדגשת קישורים" : "הפעל הדגשת קישורים"}
+
+          <MenuOption
+            onClick={() =>
+              updateSetting("highlightLinks", !settings.highlightLinks)
+            }
+            role="menuitem"
+          >
+            {settings.highlightLinks
+              ? "כבה הדגשת קישורים"
+              : "הפעל הדגשת קישורים"}
           </MenuOption>
-          <MenuOption onClick={resetSettings}>איפוס הגדרות נגישות</MenuOption>
+
+          <ResetButton onClick={resetSettings}>איפוס הגדרות נגישות</ResetButton>
         </MenuOptions>
       )}
     </MenuContainer>
@@ -117,55 +192,81 @@ const MenuContainer = styled.div`
 
 const MenuButton = styled.button`
   background-color: #2c3a33;
-  color: #c5b9a5;
+  color: #c0d3ca;
   border: 2px solid #c5b9a5;
   border-radius: 50%;
   width: 60px;
   height: 60px;
-  font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  &:hover {
+  &:hover,
+  &:focus {
     background-color: #3d4f45;
     transform: translateY(-2px);
+    outline: none;
+    box-shadow: 0 0 0 2px #c5b9a5;
+  }
+
+  svg {
+    font-size: 24px;
   }
 `;
 
 const MenuOptions = styled.div`
-  margin-top: 10px;
+  position: absolute;
+  bottom: 70px;
+  right: 0;
   background-color: #2c3a33;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
   border: 2px solid #c5b9a5;
+  min-width: 250px;
 `;
 
 const MenuOption = styled.div`
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  justify-content: space-between;
+  padding: 10px;
   font-size: 16px;
   cursor: pointer;
   color: #c5b9a5;
   transition: all 0.3s ease;
+  border-radius: 4px;
 
   &:hover {
+    background-color: #3d4f45;
     color: #d6caba;
   }
+`;
 
-  svg {
-    color: #c5b9a5;
-  }
+const OptionLabel = styled.span`
+  margin-right: 10px;
+`;
 
-  .MuiIconButton-root {
-    color: #c5b9a5;
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 5px;
+`;
 
-    &:hover {
-      background-color: #3d4f45;
-    }
+const ResetButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #3d4f45;
+  color: #c5b9a5;
+  border: 1px solid #c5b9a5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #4d635a;
+    color: #d6caba;
   }
 `;
