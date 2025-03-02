@@ -26,17 +26,27 @@ const NavBar = () => {
     },
     brandName: {
       textDecoration: "none",
-      color: "#C0D3CAFF",
+      color: "#E8F3EEFF",
       fontSize: "28px",
       fontWeight: "600",
       fontFamily: "'Cormorant Garamond', serif",
-      textShadow: "2px 2px 8px rgba(192, 211, 202, 0.4)",
+      textShadow: "2px 2px 8px rgba(232, 243, 238, 0.6)",
       letterSpacing: "2px",
       transition: "all 0.3s ease",
+      animation: "wave 2s ease-in-out infinite",
       "&:hover": {
-        color: "#D4E4DCFF",
-        textShadow: "2px 2px 12px rgba(192, 211, 202, 0.6)",
+        color: "#FFFFFF",
+        textShadow: "2px 2px 12px rgba(255, 255, 255, 0.8)",
         transform: "scale(1.02)",
+      },
+    },
+
+    "@keyframes wave": {
+      "0%, 100%": {
+        transform: "translateY(0)",
+      },
+      "50%": {
+        transform: "translateY(-5px)",
       },
     },
 
@@ -58,7 +68,10 @@ const NavBar = () => {
     <div style={styles.navContainer}>
       <Link
         to="/"
-        style={styles.brandName}
+        style={{
+          ...styles.brandName,
+          animation: "wave 3s ease-in-out infinite",
+        }}
         onClick={() => window.scrollTo(0, 0)}
       >
         Netanel Photography
