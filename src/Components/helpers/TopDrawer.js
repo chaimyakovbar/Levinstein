@@ -37,7 +37,7 @@ const TopDrawer = () => {
     { text: "בית", link: "/" },
     { text: "עבודות", link: "/works" },
     { text: "עלי", link: "/about" },
-    { text: "יצירת קשר", link: "/contact" },
+    // { text: "יצירת קשר", link: "/contact" },
   ];
 
   return (

@@ -36,7 +36,7 @@ const Home = () => {
         <div style={styles.sectionWrapper}>
           <Works />
         </div>
-        <Contact />
+        {/* <Contact /> */}
         <SocialNetworks />
       </div>
     </div>

@@ -24,7 +24,7 @@ const App = () => {
         <Route path="/collections/:label" element={<CollectionPage />} />
         <Route path="/PolicySupport" element={<PolicySupport />} />
         <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+        {/* <Route path="/contact" element={<Contact />} /> */}
       </Routes>
     </Router>
   );
